@@ -1,6 +1,6 @@
 Testing done with the following:
 
-sudo ./TCP_Proxy.py 192.168.1.151 21 ftp.gnu.org 21 True
+sudo ./TCP_Proxy.py <LOCAL_IP> 21 ftp.gnu.org 21 True
 
 ftp ftp.gnu.ord
 	uname : anonymous
