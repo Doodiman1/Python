@@ -36,14 +36,16 @@ python3 TCP_Proxy.py 127.0.0.1 9001 10.12.132.1 9001 True
     
 ## Testing done with the following:
 
-### First Terminal
-
+First Terminal:
+```shell
 sudo ./TCP_Proxy.py <LOCAL_IP> 21 ftp.gnu.org 21 True
-### Second Terminal
+```
+Second Terminal:
+```shell
 ftp ftp.gnu.ord
 	uname : anonymous
 	passwd: none
-
+```
 ## Disclaimer
 
 This script is provided for educational and ethical purposes only. Any unauthorized use is the responsibility of the user. The author is not liable for any damages or illegal activities caused by using this script.
