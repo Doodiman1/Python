@@ -7,12 +7,13 @@ import subprocess
 import sys
 import textwrap
 import threading
+from pyfiglet import Figlet
 
 def execute(cmd):
     cmd = cmd.strip()
     if not cmd:
         return 
-    output = subprocess.check_output(shlek.split(cmd),
+    output = subprocess.check_output(shlex.split(cmd),
             stderr=subprocess.STDOUT)
     return output.decode()
 
@@ -52,14 +53,14 @@ class PetCat:
                     self.socket.send(buffer.encode())
 
         except KeyboardInterrupt:
-                print("User Terminated")
+                print("\nUser Terminated")
                 self.socket.close()
                 sys.exit()
 
     def listen(self):
         self.socket.bind((self.args.target, self.args.port))
         self.socket.listen(5)
-        
+        print("[+]Listening...") 
         while True:
             client_socket, _= self.socket.accept()
             client_thread = threading.Thread(
@@ -104,32 +105,36 @@ class PetCat:
 
 
 if __name__ == "__main__":
+    f = Figlet(font='slant')
+    banner = f.renderText('PetCat!')
+    
+
     parser = argparse.ArgumentParser(
-            description = "Perry's Netcat Tool",
-            formatter_class = argparse.RawDescriptionHelpFormatter,
-            epilog = textwrap.dedent(''' Example:
-                PetCat.py -t 192.168.1.10 -p 9001 -l -c # command shell
-                PetCat.py -t 192.168.1.10 -p 9001 -l -u=mytest.txt # upload to file
-                PetCat.py -t 192.168.1.10 -p 9001 -l -e=\"cat /etc/passwd\" # execute command
-                echo 'ABC' | ./Petcat.py -t 192.168.1.10 -p 135 # echo text to server port 135
-                PetCat.py -t 192.168.1.10 -p 9001 # connect to server
-                '''))
+        usage = f"%(prog)s [options]",
+        formatter_class = argparse.RawDescriptionHelpFormatter,
+        epilog = textwrap.dedent(''' Example:
+            PetCat.py -t 192.168.1.10 -p 9001 -l -c                     # generate command shell
+            PetCat.py -t 192.168.1.10 -p 9001 -l -u=mytest.txt          # upload to file
+            PetCat.py -t 192.168.1.10 -p 9001 -l -e=\"cat /etc/passwd\"   # execute command
+            echo 'ABC' | ./Petcat.py -t 192.168.1.10 -p 135             # echo text to server port 135
+            PetCat.py -t 192.168.1.10 -p 9001                           # connect to server
+            '''))
 
     parser.add_argument('-c', '--command', action='store_true', help='command shell')
-    parser.add_argument('-e', '--execute', help='exeute specified command')
+    parser.add_argument('-e', '--execute', metavar='COMMAND', help='execute specified command')
     parser.add_argument('-l', '--listen', action='store_true', help='listen')
     parser.add_argument('-p', '--port', type=int, default=9001, help='port number')
     parser.add_argument('-t', '--target', default='192.168.1.10', help='target IP')
-    parser.add_argument('-u', '--upload', help='upload file')
+    parser.add_argument('-u', '--upload', metavar='FILE', help='upload file')
     args = parser.parse_args()
-    if args.listen:
-        buffer = ''
+    if len(sys.argv) == 1:
+        print(banner)
+        parser.print_help()
+        sys.exit()
+    elif args.listen:
+            buffer = ''
     else:
         buffer = sys.stdin.read()
     
     pc = PetCat(args, buffer.encode())
     pc.run()
-    
-
-
-
